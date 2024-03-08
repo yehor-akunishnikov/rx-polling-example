@@ -1,31 +1,53 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, OnDestroy} from '@angular/core';
 
-import {catchError, map, Observable, of, startWith, Subject, switchMap, takeUntil, throwError} from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError
+} from 'rxjs';
 
-import {UserDataRestService, PollingProgress, InitPayload} from 'data-layers';
+import {InitPayload, PollingProgress, UserDataRestService} from 'data-layers';
 import {POLLING_STATUSES, PollingResult} from '../models';
 
 @Injectable()
-export class UserDataPollingService {
+export class UserDataPollingService implements OnDestroy {
   private restService: UserDataRestService = inject(UserDataRestService);
-  private destroy: Subject<void> = new Subject();
 
-  public processUserData(initPayload: InitPayload): Observable<PollingResult> {
+  private destroy: Subject<void> = new Subject();
+  private state = new BehaviorSubject<PollingResult>({ status: POLLING_STATUSES.NOT_STARTED });
+
+  public pollingResult$: Observable<PollingResult> = this.state.asObservable();
+
+  public ngOnDestroy(): void {
+    this.destroy.next();
+  }
+
+  public processUserData(initPayload: InitPayload): void {
     const pollingObservable$ = this.init(initPayload).pipe(
       switchMap(() => this.poll().pipe(
         switchMap(() => this.obtainResult()),
       )),
-      startWith({status: POLLING_STATUSES.IN_PROGRESS}),
     );
 
-    return pollingObservable$.pipe(
+    pollingObservable$.pipe(
       catchError(e => of(e)),
+      startWith({status: POLLING_STATUSES.IN_PROGRESS}),
+      tap(pollingResult => this.state.next(pollingResult)),
       takeUntil(this.destroy),
-    );
+    ).subscribe();
   }
 
   public stopProcessing(): void {
     this.destroy.next();
+    this.state.next({ status: POLLING_STATUSES.NOT_STARTED });
   }
 
   private handlePollingError(errorMessage: string): PollingResult {

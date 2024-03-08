@@ -1,27 +1,15 @@
-<router-outlet></router-outlet>
+<header class="w-full fixed top-0 left-0 z-10">
+  <nav class="border border-gray-300 py-2 px-3 rounded-md">
+    <div class="flex justify-between">
+      <div class="text-blue-500">Rx Polling</div>
+      <ul class="flex justify-between">
+        <li class="mr-3"><a class="cursor-pointer hover:text-blue-300" routerLink="polling" routerLinkActive="text-blue-400">Polling</a></li>
+        <li><a class="cursor-pointer hover:text-blue-300" routerLink="sample" routerLinkActive="text-blue-400">Another page</a></li>
+      </ul>
+    </div>
+  </nav>
+</header>
 
 <div class="min-h-screen flex justify-center items-center">
-  <div class="w-1/2">
-    <div class="mb-5">
-      <ui-process-polling [initPayload]="inputPayload$ | async"></ui-process-polling>
-    </div>
-
-    <div class="border border-gray-300 p-5 pb-3 rounded-md">
-      <p>Settings</p>
-      <form [formGroup]="settingsForm">
-        <p>
-          User id:
-          <input class="border border-gray-300 rounded-md py-1 px-2" formControlName="id" type="text">
-        </p>
-        <p>
-          Is success progress:
-          <input formControlName="isSuccessProgress" type="checkbox">
-        </p>
-        <p>
-          Can obtain data:
-          <input formControlName="canObtainData" type="checkbox">
-        </p>
-      </form>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 </div>
