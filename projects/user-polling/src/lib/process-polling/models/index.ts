@@ -1,6 +1,6 @@
 import {UserData} from 'data-layers';
 
-export interface PollingResult {
+export interface PollingState {
   data?: UserData;
   status: POLLING_STATUSES;
   error?: string;
