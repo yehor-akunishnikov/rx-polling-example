@@ -1,0 +1,27 @@
+<router-outlet></router-outlet>
+
+<div class="min-h-screen flex justify-center items-center">
+  <div class="w-1/2">
+    <div class="mb-5">
+      <ui-process-polling [initPayload]="initPayload$ | async"></ui-process-polling>
+    </div>
+
+    <div class="border border-gray-300 p-5 pb-3 rounded-md">
+      <p>Settings</p>
+      <form [formGroup]="settingsForm">
+        <p>
+          User id:
+          <input class="border border-gray-300 rounded-md py-1 px-2" formControlName="id" type="text">
+        </p>
+        <p>
+          Is success progress:
+          <input formControlName="isSuccessProgress" type="checkbox">
+        </p>
+        <p>
+          Can obtain data:
+          <input formControlName="canObtainData" type="checkbox">
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
